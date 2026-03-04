@@ -1,4 +1,5 @@
 import { FINDINGS } from '@/data/mockData';
+import { SeverityBadge } from '@/components/ui/SeverityBadge';
 
 export function FindingLog() {
     return (
@@ -13,11 +14,7 @@ export function FindingLog() {
                     <div key={finding.id} className="bg-white dark:bg-[#1A1A1A] border border-zinc-200 dark:border-zinc-800 rounded-[12px] p-4 shadow-sm shrink-0">
 
                         <div className="flex items-center justify-between mb-2.5">
-                            <span className={`px-2 py-[3px] rounded-full text-[10px] uppercase font-bold text-white ${finding.severity === 'Critical' ? 'bg-[#E52B50]' :
-                                finding.severity === 'High' ? 'bg-[#FF9500]' : 'bg-[#FFCC00]'
-                                }`}>
-                                {finding.severity}
-                            </span>
+                            <SeverityBadge severity={finding.severity} />
                             <span className="text-[11px] font-medium text-zinc-400">{finding.time}</span>
                         </div>
 

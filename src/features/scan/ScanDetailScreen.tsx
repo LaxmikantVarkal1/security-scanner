@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Sidebar } from '../dashboard/components/Sidebar';
 import { ScanProgressTracker } from './components/ScanProgressTracker';
 import { ScanMetadataRow } from './components/ScanMetadataRow';
@@ -6,8 +7,18 @@ import { ScanStatusBar } from './components/ScanStatusBar';
 import { toast } from 'sonner';
 import { ChevronDown, X } from 'lucide-react';
 import { LiveConsole } from './components/LiveConsole';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 
 export function ScanDetailScreen() {
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1200);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#111111] font-sans flex text-zinc-900 dark:text-zinc-100">
             <Sidebar />
@@ -49,8 +60,24 @@ export function ScanDetailScreen() {
                     <div className="flex flex-col gap-6 flex-1 min-h-0">
                         {/* Top Container */}
                         <div className="bg-white h-[23%] dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-[12px] p-8 shadow-sm shrink-0">
-                            <ScanProgressTracker />
-                            <ScanMetadataRow />
+                            {isLoading ? (
+                                <div className="flex flex-col gap-8 h-full justify-center">
+                                    <div className="flex items-center justify-between px-8 relative">
+                                        <div className="absolute top-1/2 left-16 right-16 h-0.5 bg-zinc-200 dark:bg-zinc-800 -translate-y-1/2 z-0" />
+                                        {[...Array(4)].map((_, i) => (
+                                            <div key={i} className="flex flex-col items-center gap-3 z-10 bg-white dark:bg-[#151515] px-4">
+                                                <SkeletonLoader className="w-12 h-12 rounded-full" />
+                                                <SkeletonLoader className="w-20 h-4" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <ScanProgressTracker />
+                                    <ScanMetadataRow />
+                                </>
+                            )}
                         </div>
 
                         {/* Unified Live Scan Console Container */}
@@ -76,14 +103,31 @@ export function ScanDetailScreen() {
 
                             {/* Main Split Content */}
                             <div className="flex flex-col xl:flex-row flex-1 min-h-0 overflow-hidden">
-                                {/* Left: Console */}
-                                <div className="flex-1 min-w-0 border-r-0 xl:border-r border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden">
-                                    <LiveConsole />
-                                </div>
-                                {/* Right: Findings */}
-                                <div className="w-full xl:w-[420px] shrink-0 flex flex-col overflow-hidden border-t xl:border-t-0 border-zinc-200 dark:border-zinc-800">
-                                    <FindingLog />
-                                </div>
+                                {isLoading ? (
+                                    <div className="flex-1 flex w-full h-full p-6 p-4 gap-6">
+                                        <div className="flex-1 flex flex-col gap-4">
+                                            {[...Array(6)].map((_, i) => (
+                                                <SkeletonLoader key={i} className={`h-4 ${i % 2 === 0 ? 'w-3/4' : 'w-1/2'}`} />
+                                            ))}
+                                        </div>
+                                        <div className="w-[420px] shrink-0 border-l border-zinc-800 pl-6 flex flex-col gap-4 hidden xl:block">
+                                            {[...Array(3)].map((_, i) => (
+                                                <SkeletonLoader key={i} className="h-28 w-full rounded-xl" />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* Left: Console */}
+                                        <div className="flex-1 min-w-0 border-r-0 xl:border-r border-zinc-200 dark:border-zinc-800 flex flex-col overflow-hidden">
+                                            <LiveConsole />
+                                        </div>
+                                        {/* Right: Findings */}
+                                        <div className="w-full xl:w-[420px] shrink-0 flex flex-col overflow-hidden border-t xl:border-t-0 border-zinc-200 dark:border-zinc-800">
+                                            <FindingLog />
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
                             {/* Footer integrated into Container */}

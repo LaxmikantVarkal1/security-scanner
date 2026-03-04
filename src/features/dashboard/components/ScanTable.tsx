@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SCANS_DATA } from '@/data/mockData';
+import { StatusChip } from '@/components/ui/StatusChip';
 
 export const ALL_COLUMNS = [
     { id: 'name', label: 'Scan Name' },
@@ -126,9 +127,10 @@ export function ScanTable({ searchQuery, filterStatus, visibleColumns }: ScanTab
                     </span>
                     <div className="flex items-center gap-2 ml-auto">
                         <button
+                            aria-label="Previous page"
                             disabled={safeCurrentPage === 1}
                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-[#0CC8A8]/50"
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
@@ -136,9 +138,10 @@ export function ScanTable({ searchQuery, filterStatus, visibleColumns }: ScanTab
                             {safeCurrentPage} / {totalPages}
                         </span>
                         <button
+                            aria-label="Next page"
                             disabled={safeCurrentPage === totalPages}
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-[#0CC8A8]/50"
                         >
                             <ChevronRight className="w-4 h-4" />
                         </button>
@@ -146,28 +149,5 @@ export function ScanTable({ searchQuery, filterStatus, visibleColumns }: ScanTab
                 </div>
             )}
         </div>
-    );
-}
-
-function StatusChip({ status }: { status: string }) {
-    let colors = '';
-    switch (status) {
-        case 'Completed':
-            colors = 'bg-[#E6F8F5] text-[#0BA68B] border border-[#0BA68B]/20 dark:bg-[#0BA68B]/10 dark:text-[#0CC8A8]';
-            break;
-        case 'Failed':
-            colors = 'bg-[#FFEAEB] text-[#E52B50] border border-[#E52B50]/20 dark:bg-[#E52B50]/10 dark:text-[#FF3B30]';
-            break;
-        case 'Scheduled':
-            colors = 'bg-[#EEF2FC] text-[#4169E1] border border-[#4169E1]/20 dark:bg-[#4169E1]/10 dark:text-[#4169E1]';
-            break;
-        default:
-            colors = 'bg-zinc-100 text-zinc-600 border border-zinc-200';
-    }
-
-    return (
-        <span className={`inline-flex items-center px-2.5 py-1 rounded-[6px] text-[12px] font-bold whitespace-nowrap ${colors}`}>
-            {status}
-        </span>
     );
 }

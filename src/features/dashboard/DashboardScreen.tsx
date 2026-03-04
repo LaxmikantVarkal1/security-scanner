@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopStatsBar } from './components/TopStatsBar';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import { ScanTable, ALL_COLUMNS, type ColumnId } from './components/ScanTable';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { Drawer } from '@/components/ui/drawer';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 const STATUS_OPTIONS = ['Completed', 'Failed', 'Scheduled'];
 
 export function DashboardScreen() {
+    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState<string | null>(null);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -23,6 +25,14 @@ export function DashboardScreen() {
         vulnerability: true,
         lastScan: true,
     });
+
+    useEffect(() => {
+        // Simulate network request
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1200);
+        return () => clearTimeout(timer);
+    }, []);
 
     const toggleColumn = (id: ColumnId) => {
         setVisibleColumns(prev => ({
@@ -69,7 +79,19 @@ export function DashboardScreen() {
                 <main className="flex-1 p-6 lg:p-8 flex flex-col min-h-0 overflow-hidden">
                     <div className="w-full h-full flex flex-col max-w-[1400px] mx-auto min-h-0">
                         <div className="shrink-0 bg-white dark:bg-[#1A1A1A] rounded-[24px]">
-                            <TopStatsBar />
+                            {isLoading ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
+                                    {[...Array(4)].map((_, i) => (
+                                        <div key={i} className="flex flex-col gap-3 p-4 bg-zinc-50 dark:bg-zinc-800/20 rounded-xl">
+                                            <SkeletonLoader className="h-4 w-24" />
+                                            <SkeletonLoader className="h-8 w-16" />
+                                            <SkeletonLoader className="h-3 w-32" />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <TopStatsBar />
+                            )}
                         </div>
 
                         <div className="flex-1 min-h-0 bg-white dark:bg-[#111111] rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 mt-6 shadow-sm flex flex-col overflow-hidden">
@@ -82,11 +104,22 @@ export function DashboardScreen() {
                                     onOpenColumnDrawer={() => setIsColumnDrawerOpen(true)}
                                 />
                             </div>
-                            <ScanTable
-                                searchQuery={searchQuery}
-                                filterStatus={filterStatus}
-                                visibleColumns={visibleColumns}
-                            />
+                            {isLoading ? (
+                                <div className="flex-1 flex flex-col gap-4 mt-4">
+                                    <SkeletonLoader className="h-10 w-full" />
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        {[...Array(6)].map((_, i) => (
+                                            <SkeletonLoader key={i} className="h-14 w-full" />
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <ScanTable
+                                    searchQuery={searchQuery}
+                                    filterStatus={filterStatus}
+                                    visibleColumns={visibleColumns}
+                                />
+                            )}
                         </div>
                     </div>
                 </main>

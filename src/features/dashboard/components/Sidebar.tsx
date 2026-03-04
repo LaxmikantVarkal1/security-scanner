@@ -55,6 +55,7 @@ export function Sidebar() {
             <div className="lg:hidden fixed top-0 left-0 h-16 w-16 flex items-center justify-center z-50">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-label={isOpen ? "Close menu" : "Open menu"}
                     className="p-2 rounded-md bg-white dark:bg-[#1A1A1A] border border-zinc-200 dark:border-zinc-800 shadow-sm"
                 >
                     {isOpen ? <X className="w-5 h-5 text-zinc-900 dark:text-white" /> : <Menu className="w-5 h-5 text-zinc-900 dark:text-white" />}
@@ -131,8 +132,17 @@ export function Sidebar() {
                     )}
 
                     <div
-                        className={`flex items-center gap-3 p-2 -mx-1 cursor-pointer rounded-xl transition-colors ${isProfileOpen ? 'bg-zinc-50 dark:bg-zinc-800/50' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Toggle user menu"
+                        className={`flex items-center gap-3 p-2 -mx-1 cursor-pointer rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-[#0CC8A8]/50 ${isProfileOpen ? 'bg-zinc-50 dark:bg-zinc-800/50' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'}`}
                         onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setIsProfileOpen(!isProfileOpen);
+                            }
+                        }}
                     >
                         <div className="relative w-10 h-10 rounded-full bg-black flex items-center justify-center shrink-0 overflow-hidden">
                             <svg viewBox="0 0 100 100" className="w-[45px] h-[45px] text-[#FFC107] absolute -bottom-2" fill="currentColor">
